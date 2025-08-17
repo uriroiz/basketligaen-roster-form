@@ -66,6 +66,11 @@
     .jersey-input { text-align: center; font-weight: 700; }
     .duplicate { border-color: var(--err) !important; background: var(--err-bg) !important; }
 
+    /* Inline field error */
+    .field-error { display:none; margin-top:6px; padding:10px 12px; border-radius:8px;
+      background: var(--err-bg); border:1px solid var(--err-brd); color:#991b1b; font-weight:600; font-size:.9rem; }
+    .input-error { border-color: var(--err) !important; background: var(--err-bg) !important; }
+
     /* Bulk Operations */
     .bulk-ops { margin-bottom: 16px; padding: 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #0ea5e9; border-radius: 12px; }
     .bulk-ops h3 { margin: 0 0 16px; font-size: 16px; font-weight: 700; color: #0369a1; display: flex; align-items: center; gap: 8px; }
@@ -123,7 +128,7 @@
     <p class="subtitle">Official roster form for Basketligaen teams • Powered by Pixellot Advantage</p>
 
     <div class="version-info" aria-live="polite">
-      <span id="versionBadge" class="version">Version 3.12.0</span>
+      <span id="versionBadge" class="version">Version 3.23.5</span>
       <span class="date">Updated: August 2025</span>
     </div>
 
@@ -185,6 +190,8 @@
             <div class="col-6">
               <label for="submitterEmail">Your Email</label>
               <input id="submitterEmail" name="submitterEmail" type="email" placeholder="Enter your email address" autocomplete="email" inputmode="email" required />
+              <!-- Inline error for submitter email -->
+              <div id="submitterEmailError" class="field-error" role="alert" aria-live="assertive"></div>
             </div>
           </div>
         </section>
@@ -195,6 +202,7 @@
         <section class="roster-section" aria-labelledby="players-h">
           <h2 id="players-h">🎯 Player Roster</h2>
           <div id="dupWarn" class="status status--warn" role="alert" aria-live="assertive"></div>
+          <div id="emailWarn" class="status status--warn" role="alert" aria-live="assertive"></div>
           
           <!-- Bulk Operations -->
           <div class="bulk-ops">
@@ -256,6 +264,7 @@
                 <th style="width:90px">Jersey #</th>
                 <th style="min-width:160px">First Name</th>
                 <th style="min-width:160px">Last Name</th>
+                <th style="width:90px">Height (CM)</th>
                 <th style="width:100px">Position</th>
                 <th style="min-width:220px">Email Address</th>
               </tr>
@@ -285,11 +294,11 @@
               <tr class="staff-row">
                 <td>17</td>
                 <td><strong>Head Coach</strong></td>
-                <td><input type="text" name="coach_first" placeholder="First name" /></td>
-                <td><input type="text" name="coach_last" placeholder="Last name" /></td>
+                <td><input type="text" name="coach_first" placeholder="First name" required /></td>
+                <td><input type="text" name="coach_last" placeholder="Last name" required /></td>
                 <td>-</td>
-                <td><input type="email" name="coach_email" placeholder="Email (optional)" /></td>
-                <td><input type="tel" name="coach_phone" placeholder="Phone (optional)" inputmode="tel" /></td>
+                <td><input type="email" name="coach_email" placeholder="Email" required /></td>
+                <td><input type="tel" name="coach_phone" placeholder="Phone" inputmode="tel" required /></td>
               </tr>
               <tr class="staff-row">
                 <td>18</td>
@@ -297,8 +306,8 @@
                 <td><input type="text" name="asst1_first" placeholder="First name" /></td>
                 <td><input type="text" name="asst1_last" placeholder="Last name" /></td>
                 <td>-</td>
-                <td><input type="email" name="asst1_email" placeholder="Email (optional)" /></td>
-                <td><input type="tel" name="asst1_phone" placeholder="Phone (optional)" inputmode="tel" /></td>
+                <td><input type="email" name="asst1_email" placeholder="Email" /></td>
+                <td><input type="tel" name="asst1_phone" placeholder="Phone" inputmode="tel" /></td>
               </tr>
               <tr class="staff-row">
                 <td>19</td>
@@ -306,8 +315,8 @@
                 <td><input type="text" name="asst2_first" placeholder="First name" /></td>
                 <td><input type="text" name="asst2_last" placeholder="Last name" /></td>
                 <td>-</td>
-                <td><input type="email" name="asst2_email" placeholder="Email (optional)" /></td>
-                <td><input type="tel" name="asst2_phone" placeholder="Phone (optional)" inputmode="tel" /></td>
+                <td><input type="email" name="asst2_email" placeholder="Email" /></td>
+                <td><input type="tel" name="asst2_phone" placeholder="Phone" inputmode="tel" /></td>
               </tr>
               <tr class="staff-row">
                 <td>20</td>
@@ -315,8 +324,8 @@
                 <td><input type="text" name="asst3_first" placeholder="First name" /></td>
                 <td><input type="text" name="asst3_last" placeholder="Last name" /></td>
                 <td>-</td>
-                <td><input type="email" name="asst3_email" placeholder="Email (optional)" /></td>
-                <td><input type="tel" name="asst3_phone" placeholder="Phone (optional)" inputmode="tel" /></td>
+                <td><input type="email" name="asst3_email" placeholder="Email" /></td>
+                <td><input type="tel" name="asst3_phone" placeholder="Phone" inputmode="tel" /></td>
               </tr>
               <tr class="staff-row">
                 <td>21</td>
@@ -324,8 +333,8 @@
                 <td><input type="text" name="gm_first" placeholder="First name" /></td>
                 <td><input type="text" name="gm_last" placeholder="Last name" /></td>
                 <td>-</td>
-                <td><input type="email" name="gm_email" placeholder="Email (optional)" /></td>
-                <td><input type="tel" name="gm_phone" placeholder="Phone (optional)" inputmode="tel" /></td>
+                <td><input type="email" name="gm_email" placeholder="Email" /></td>
+                <td><input type="tel" name="gm_phone" placeholder="Phone" inputmode="tel" /></td>
               </tr>
             </tbody>
           </table>
@@ -354,7 +363,7 @@
       </div>
 
       <div id="loading" class="loading">🔄 Submitting your roster...</div>
-      <div id="okMsg" class="status status--ok" role="status" aria-live="polite">✅ Roster submitted successfully. Email sent and CSV downloaded.</div>
+      <div id="okMsg" class="status status--ok" role="status" aria-live="polite">✅ Action complete.</div>
     </form>
   </div>
 
@@ -369,7 +378,7 @@
     const DATA_SINK_URL = 'https://script.google.com/macros/s/AKfycbxchgyxazvH9t4N0prpLTboqeAlb6kRz6xUj-klQ1HIYtrZjs9qeKxWVqTttVJKdREj/exec';
     const DATA_SINK_KEY = 'Pixellot2@25';
 
-    const APP_VERSION = '3.12.0';
+    const APP_VERSION = '3.23.5';
     const BUILD_DATE = new Date().toISOString().slice(0,10);
 
     const CURRENT_SEASON_START_YEAR = 2025;
@@ -379,7 +388,7 @@
 
     const DEFAULT_PLAYER_ROWS = 16;
     const HARD_MAX_PLAYERS = 40;
-    const STORAGE_KEY = "basketligaenRosterDraft_v3120";
+    const STORAGE_KEY = "basketligaenRosterDraft_v3235";
 
     // === Multi-Step Navigation ===
     let currentStep = 1;
@@ -389,7 +398,6 @@
       const progress = (currentStep / totalSteps) * 100;
       document.getElementById('progressFill').style.width = progress + '%';
       
-      // Update step indicators
       document.querySelectorAll('.step').forEach((step, index) => {
         const stepNum = index + 1;
         step.classList.remove('active', 'completed', 'pending');
@@ -409,9 +417,8 @@
 
     function showStep(step) {
       document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-      document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+      document.querySelector('.form-step[data-step="' + step + '"]').classList.add('active');
       
-      // Update navigation buttons
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
       const submitBtn = document.getElementById('submitBtn');
@@ -420,121 +427,98 @@
       nextBtn.style.display = step < totalSteps ? 'block' : 'none';
       submitBtn.style.display = step === totalSteps ? 'block' : 'none';
       
-      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
-      // Update review content if on review step
       if (step === 4) {
         updateReviewContent();
       }
     }
 
-    function validateCurrentStep() {
-      const currentStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-      const requiredFields = currentStepEl.querySelectorAll('[required]');
+    // === Enhanced Email Validation with Danish Support ===
+    function emailValid(email) {
+      const e = (email || '').trim().toLowerCase();
+      if (!e) return { ok: true };
       
-      for (const field of requiredFields) {
-        if (!field.value.trim()) {
-          field.focus();
-          field.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          return false;
-        }
+      // Basic format check
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return { ok: false };
+      
+      // Check for invalid patterns
+      if (e.includes('..')) return { ok: false }; // Double dots anywhere
+      if (e.includes('@.') || e.includes('.@')) return { ok: false }; // Dots adjacent to @
+      if (e.startsWith('.') || e.endsWith('.')) return { ok: false }; // Starts or ends with dot
+      if (e.includes('@-') || e.includes('-@')) return { ok: false }; // Hyphens adjacent to @
+      
+      // Split and validate parts
+      const parts = e.split('@');
+      if (parts.length !== 2) return { ok: false };
+      
+      const [localPart, domainPart] = parts;
+      if (!localPart || !domainPart) return { ok: false };
+      
+      // Validate domain part has proper TLD
+      const domainParts = domainPart.split('.');
+      if (domainParts.length < 2) return { ok: false };
+      
+      // Check for empty parts in domain
+      for (let i = 0; i < domainParts.length; i++) {
+        if (!domainParts[i] || domainParts[i].length === 0) return { ok: false };
       }
       
-      // Additional validation for step 2 (players)
-      if (currentStep === 2) {
-        if (!requireAtLeastOneCompletePlayer()) {
-          alert('Please add at least one complete player (jersey, first, last, position).');
-          return false;
-        }
-        
-        const badRow = validatePlayersCompleteness();
-        if (badRow) {
-          alert(`Player #${badRow} is incomplete. Jersey, First, Last, and Position are all required when adding a player.`);
-          return false;
-        }
-        
-        // Check duplicates
-        checkDuplicates();
-        if (document.getElementById('dupWarn').style.display === 'block') {
-          alert('Resolve duplicate jersey numbers before continuing.');
-          return false;
-        }
+      // TLD should be at least 2 characters (supports .dk)
+      const tld = domainParts[domainParts.length - 1];
+      if (tld.length < 2) return { ok: false };
+      
+      // Common typo corrections (including Danish)
+      const typoMap = {
+        '.con': '.com', '.cmo': '.com', '.ocm': '.com', '.cpm': '.com',
+        '.ddk': '.dk', '.d': '.dk', '.dkk': '.dk',
+        '@gamil.': '@gmail.', '@gmial.': '@gmail.', '@gmai.': '@gmail.',
+        '@yahooo.': '@yahoo.', '@hotmial.': '@hotmail.', '@outlok.': '@outlook.'
+      };
+      
+      for (const k in typoMap) {
+        if (e.includes(k)) return { ok: false, suggestion: e.replace(k, typoMap[k]) };
       }
       
-      return true;
+      return { ok: true };
     }
 
-    function nextStep() {
-      if (!validateCurrentStep()) return;
-      
-      if (currentStep < totalSteps) {
-        currentStep++;
-        showStep(currentStep);
-        updateProgress();
+    function formatEmail(email) {
+      if (!email) return '';
+      return email.trim().toLowerCase();
+    }
+
+    // === Inline error helpers ===
+    function showFieldError(inputEl, msg, errorElId) {
+      const box = document.getElementById(errorElId);
+      if (box) {
+        box.textContent = msg;
+        box.style.display = 'block';
+      }
+      if (inputEl) {
+        inputEl.classList.add('input-error');
+        inputEl.setAttribute('aria-invalid', 'true');
       }
     }
 
-    function prevStep() {
-      if (currentStep > 1) {
-        currentStep--;
-        showStep(currentStep);
-        updateProgress();
+    function clearFieldError(inputEl, errorElId) {
+      const box = document.getElementById(errorElId);
+      if (box) {
+        box.textContent = '';
+        box.style.display = 'none';
+      }
+      if (inputEl) {
+        inputEl.classList.remove('input-error');
+        inputEl.removeAttribute('aria-invalid');
       }
     }
 
-    function updateReviewContent() {
-      const formData = new FormData(document.getElementById('rosterForm'));
-      const roster = buildRoster(formData);
-      
-      let html = '<div class="grid">';
-      
-      // Team Info
-      html += '<div class="col-12"><h3>🏆 Team Information</h3>';
-      html += `<p><strong>Team:</strong> ${roster.teamName}</p>`;
-      html += `<p><strong>League:</strong> ${roster.league} (${roster.leagueEnglish})</p>`;
-      html += `<p><strong>Season:</strong> ${seasonLabel(parseInt(roster.season.split('-')[0], 10))}</p>`;
-      html += `<p><strong>Submitted by:</strong> ${roster.submitterName}</p>`;
-      html += `<p><strong>Email:</strong> ${roster.submitterEmail}</p></div>`;
-      
-      // Players
-      html += '<div class="col-6"><h3>🎯 Players (' + roster.players.length + ')</h3>';
-      if (roster.players.length > 0) {
-        html += '<ul style="margin: 0; padding-left: 20px;">';
-        roster.players.forEach(p => {
-          html += `<li>#${p.jersey} ${p.firstName} ${p.lastName} (${p.position})${p.email ? ' - ' + p.email : ''}</li>`;
-        });
-        html += '</ul>';
-      } else {
-        html += '<p><em>No players added</em></p>';
-      }
-      html += '</div>';
-      
-      // Staff
-      html += '<div class="col-6"><h3>👨‍💼 Coaching Staff (' + roster.staff.length + ')</h3>';
-      if (roster.staff.length > 0) {
-        html += '<ul style="margin: 0; padding-left: 20px;">';
-        roster.staff.forEach(s => {
-          html += `<li><strong>${s.role}:</strong> ${s.firstName} ${s.lastName}${s.email ? ' - ' + s.email : ''}${s.phone ? ' | ' + s.phone : ''}</li>`;
-        });
-        html += '</ul>';
-      } else {
-        html += '<p><em>No staff added</em></p>';
-      }
-      html += '</div>';
-      
-      html += '</div>';
-      document.getElementById('reviewContent').innerHTML = html;
-    }
-
-    // === Utilities ===
+    // === Danish Character Normalization + Name Utils ===
     function normalizeDanish(str="") {
-      // Normalize Danish characters to English equivalents
       return str
         .replace(/[æÆ]/g, match => match === 'Æ' ? 'AE' : 'ae')
         .replace(/[øØ]/g, match => match === 'Ø' ? 'OE' : 'oe')
         .replace(/[åÅ]/g, match => match === 'Å' ? 'AA' : 'aa')
-        // Additional Nordic characters that might appear
         .replace(/[äÄ]/g, match => match === 'Ä' ? 'AE' : 'ae')
         .replace(/[öÖ]/g, match => match === 'Ö' ? 'OE' : 'oe')
         .replace(/[ëË]/g, match => match === 'Ë' ? 'E' : 'e')
@@ -546,11 +530,16 @@
       const normalized = normalizeDanish(str);
       return normalized.toLowerCase().replace(/\b\w/g, ch => ch.toUpperCase()); 
     }
-    
-    function emailValid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function clean(s){ return (s ?? '').toString().trim(); }
+    function ucName(s){ return ucWords(clean(s)); }
 
     function leagueToEnglish(h) {
       return 'Basketligaen';
+    }
+
+    function positionToFullName(pos) {
+      const map = { 'G': 'Guard', 'F': 'Forward', 'C': 'Center' };
+      return map[pos] || pos;
     }
 
     function seasonLabel(fromYear) {
@@ -564,47 +553,53 @@
       const seasons = [CURRENT_SEASON_START_YEAR];
       const exposeNext = FORCE_EXPOSE_NEXT_SEASON || (new Date() >= SWITCHOVER_DATE);
       if (exposeNext) seasons.push(NEXT_SEASON_START_YEAR);
-      for (const y of seasons) {
+      
+      for (let i = 0; i < seasons.length; i++) {
+        const y = seasons[i];
         const opt = document.createElement('option');
-        opt.value = `${y}-${y + 1}`;
+        opt.value = y + '-' + (y + 1);
         opt.textContent = seasonLabel(y);
         sel.appendChild(opt);
       }
-      sel.value = `${exposeNext ? NEXT_SEASON_START_YEAR : CURRENT_SEASON_START_YEAR}-${(exposeNext ? NEXT_SEASON_START_YEAR : CURRENT_SEASON_START_YEAR) + 1}`;
+      
+      if (seasons.length > 0) {
+        const def = exposeNext ? NEXT_SEASON_START_YEAR : CURRENT_SEASON_START_YEAR;
+        sel.value = def + '-' + (def + 1);
+      }
     }
 
     function bumpRowCount() {
       const rows = document.querySelectorAll('#playersTable tr').length;
-      document.getElementById('rowCountHelp').textContent = `${rows} rows (max ${HARD_MAX_PLAYERS})`;
+      document.getElementById('rowCountHelp').textContent = rows + ' rows (max ' + HARD_MAX_PLAYERS + ')';
     }
 
-    // === Players table ===
+    // === Player Table Functions with Height Column ===
     function playerRowTemplate(idx) {
       const sn = String(idx).padStart(2, '0');
-      return `
-        <tr data-player-row="${idx}">
-          <td><input type="checkbox" class="player-select" data-player="${idx}" /></td>
-          <td><strong>${sn}</strong></td>
-          <td><input type="number" min="0" max="99" step="1" name="player${idx}_jersey" class="jersey-input" placeholder="#" inputmode="numeric" aria-label="Jersey number for player ${idx}" /></td>
-          <td><input type="text" name="player${idx}_first" placeholder="First name" aria-label="First name for player ${idx}" /></td>
-          <td><input type="text" name="player${idx}_last" placeholder="Last name" aria-label="Last name for player ${idx}" /></td>
-          <td>
-            <select name="player${idx}_position" aria-label="Position for player ${idx}">
-              <option value="">-</option>
-              <option value="G">G</option>
-              <option value="F">F</option>
-              <option value="C">C</option>
-            </select>
-          </td>
-          <td><input type="email" name="player${idx}_email" placeholder="Email (optional)" aria-label="Email for player ${idx}" /></td>
-        </tr>`;
+      return '<tr data-player-row="' + idx + '">' +
+        '<td><input type="checkbox" class="player-select" data-player="' + idx + '" /></td>' +
+        '<td><strong>' + sn + '</strong></td>' +
+        '<td><input type="number" min="0" max="99" step="1" name="player' + idx + '_jersey" class="jersey-input" placeholder="#" inputmode="numeric" /></td>' +
+        '<td><input type="text" name="player' + idx + '_first" placeholder="First name" /></td>' +
+        '<td><input type="text" name="player' + idx + '_last" placeholder="Last name" /></td>' +
+        '<td><input type="number" min="100" max="999" step="1" name="player' + idx + '_height" placeholder="CM" inputmode="numeric" class="jersey-input" /></td>' +
+        '<td><select name="player' + idx + '_position">' +
+          '<option value="">-</option>' +
+          '<option value="G">G</option>' +
+          '<option value="F">F</option>' +
+          '<option value="C">C</option>' +
+        '</select></td>' +
+        '<td><input type="email" name="player' + idx + '_email" placeholder="Email (optional)" /></td>' +
+        '</tr>';
     }
 
     function ensureRows(count) {
       const tbody = document.getElementById('playersTable');
       tbody.innerHTML = '';
-      const n = Math.min(HARD_MAX_PLAYERS, Math.max(1, count|0));
-      for (let i = 1; i <= n; i++) tbody.insertAdjacentHTML('beforeend', playerRowTemplate(i));
+      const n = Math.min(HARD_MAX_PLAYERS, Math.max(1, count || 0));
+      for (let i = 1; i <= n; i++) {
+        tbody.insertAdjacentHTML('beforeend', playerRowTemplate(i));
+      }
       hookDuplicateListeners();
       hookBulkSelectionListeners();
       bumpRowCount();
@@ -632,11 +627,11 @@
 
     // === Bulk Operations ===
     function hookBulkSelectionListeners() {
-      // Individual checkboxes
-      document.querySelectorAll('.player-select').forEach(checkbox => {
-        checkbox.removeEventListener('change', handlePlayerSelectChange);
-        checkbox.addEventListener('change', handlePlayerSelectChange);
-      });
+      const checkboxes = document.querySelectorAll('.player-select');
+      for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].removeEventListener('change', handlePlayerSelectChange);
+        checkboxes[i].addEventListener('change', handlePlayerSelectChange);
+      }
     }
 
     function handlePlayerSelectChange() {
@@ -659,10 +654,8 @@
       const selectAllBox = document.getElementById('selectAllPlayers');
       const statusSpan = document.getElementById('selectionCount');
       
-      // Update selection count
-      statusSpan.textContent = `${checkedBoxes.length} player${checkedBoxes.length !== 1 ? 's' : ''} selected`;
+      statusSpan.textContent = checkedBoxes.length + ' player' + (checkedBoxes.length !== 1 ? 's' : '') + ' selected';
       
-      // Update select all state
       if (checkedBoxes.length === 0) {
         selectAllBox.indeterminate = false;
         selectAllBox.checked = false;
@@ -679,10 +672,10 @@
       const selectAll = document.getElementById('selectAllPlayers');
       const checkboxes = document.querySelectorAll('.player-select');
       
-      checkboxes.forEach(checkbox => {
-        checkbox.checked = selectAll.checked;
-        updateRowSelection(checkbox);
-      });
+      for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = selectAll.checked;
+        updateRowSelection(checkboxes[i]);
+      }
       
       updateSelectAllState();
     }
@@ -701,130 +694,86 @@
         return;
       }
       
-      selectedCheckboxes.forEach(checkbox => {
-        const playerNum = checkbox.dataset.player;
-        const positionSelect = document.querySelector(`select[name="player${playerNum}_position"]`);
+      for (let i = 0; i < selectedCheckboxes.length; i++) {
+        const playerNum = selectedCheckboxes[i].dataset.player;
+        const positionSelect = document.querySelector('select[name="player' + playerNum + '_position"]');
         if (positionSelect) {
           positionSelect.value = selectedPosition;
         }
-      });
+      }
       
-      // Reset bulk controls
       document.getElementById('bulkPosition').value = '';
-      flashOk(`Applied ${selectedPosition} position to ${selectedCheckboxes.length} player(s).`);
+      flashOk('Applied ' + selectedPosition + ' position to ' + selectedCheckboxes.length + ' player(s).');
     }
 
     function clearSelected() {
-      document.querySelectorAll('.player-select:checked').forEach(checkbox => {
-        checkbox.checked = false;
-        updateRowSelection(checkbox);
-      });
+      const checkedBoxes = document.querySelectorAll('.player-select:checked');
+      for (let i = 0; i < checkedBoxes.length; i++) {
+        checkedBoxes[i].checked = false;
+        updateRowSelection(checkedBoxes[i]);
+      }
       updateSelectAllState();
     }
 
-    // === Duplicate jersey detection ===
+    // === Duplicate Detection ===
     let dupTimer;
     function hookDuplicateListeners() {
-      document.querySelectorAll('input[name*="_jersey"]').forEach(inp => {
-        inp.removeEventListener('input', dupHandler);
-        inp.addEventListener('input', dupHandler);
-      });
+      const inputs = document.querySelectorAll('input[name*="_jersey"]');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].removeEventListener('input', dupHandler);
+        inputs[i].addEventListener('input', dupHandler);
+      }
     }
 
     function dupHandler() {
-      window.clearTimeout(dupTimer);
-      dupTimer = window.setTimeout(checkDuplicates, 350);
+      clearTimeout(dupTimer);
+      dupTimer = setTimeout(checkDuplicates, 350);
+    }
+
+    function normJersey(val){
+      const n = parseInt(String(val).trim(), 10);
+      return Number.isFinite(n) ? String(n) : '';
     }
 
     function checkDuplicates() {
-      const jerseys = Array.from(document.querySelectorAll('input[name*="_jersey"]')).map(i => i.value.trim()).filter(Boolean);
-      const counts = jerseys.reduce((m, v) => (m[v] = (m[v]||0)+1, m), {});
-      let hasDup = false;
+      const jerseyInputs = document.querySelectorAll('input[name*="_jersey"]');
+      const counts = {};
+      jerseyInputs.forEach(inp => {
+        const v = normJersey(inp.value);
+        if (v) counts[v] = (counts[v] || 0) + 1;
+      });
       
-      document.querySelectorAll('input[name*="_jersey"]').forEach(i => {
-        const v = i.value.trim();
-        if (v && counts[v] > 1) { 
-          i.classList.add('duplicate'); 
-          hasDup = true; 
-        } else { 
-          i.classList.remove('duplicate'); 
-        }
+      let hasDup = false;
+      jerseyInputs.forEach(inp => {
+        const v = normJersey(inp.value);
+        if (v && counts[v] > 1) { inp.classList.add('duplicate'); hasDup = true; }
+        else { inp.classList.remove('duplicate'); }
       });
       
       const warn = document.getElementById('dupWarn');
-      if (hasDup) { 
-        warn.style.display = 'block'; 
-        warn.textContent = '⚠️ Duplicate jersey numbers detected. Each player must have a unique number.'; 
-      } else { 
-        warn.style.display = 'none'; 
-        warn.textContent = ''; 
+      if (hasDup) {
+        warn.style.display = 'block';
+        warn.textContent = '⚠️ Duplicate jersey numbers detected. Each player must have a unique number.';
+      } else {
+        warn.style.display = 'none';
+        warn.textContent = '';
       }
     }
 
-    // === Local draft save/restore ===
-    function saveDraft() {
-      const data = new FormData(document.getElementById('rosterForm'));
-      const obj = { currentStep };
-      for (const [k, v] of data.entries()) obj[k] = v;
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-        flashOk('Draft saved locally.');
-      } catch (e) {
-        flashOk('Draft could not be saved (storage unavailable).');
-      }
-    }
-
-    function restoreDraft() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) { 
-          alert('No draft found.'); 
-          return; 
-        }
-        
-        const obj = JSON.parse(raw);
-        
-        // Restore step
-        if (obj.currentStep) {
-          currentStep = obj.currentStep;
-          showStep(currentStep);
-          updateProgress();
-        }
-        
-        const maxIdx = Math.max(1, ...Object.keys(obj).map(k => (k.match(/player(\d+)_/)||[])[1]).filter(Boolean).map(Number));
-        ensureRows(Math.min(HARD_MAX_PLAYERS, Math.max(DEFAULT_PLAYER_ROWS, maxIdx)));
-        
-        for (const k in obj) {
-          if (k === 'currentStep') continue;
-          const el = document.querySelector(`[name="${CSS.escape(k)}"]`);
-          if (el) el.value = obj[k];
-        }
-        
-        bumpRowCount();
-        checkDuplicates();
-        flashOk('Draft restored.');
-      } catch (e) {
-        alert('Could not restore draft (storage unavailable or corrupted).');
-      }
-    }
-
-    // === Messaging ===
-    function flashOk(msg) { 
-      const el = document.getElementById('okMsg'); 
-      el.textContent = `✅ ${msg}`; 
-      el.style.display = 'block'; 
-      setTimeout(() => el.style.display = 'none', 3000); 
-    }
-
-    // === Validation helpers ===
+    // === Enhanced Validation Helpers ===
     function requireAtLeastOneCompletePlayer() {
       const rows = document.querySelectorAll('#playersTable tr').length;
       for (let i = 1; i <= rows; i++) {
-        const jersey = document.querySelector(`input[name="player${i}_jersey"]`)?.value;
-        const first = document.querySelector(`input[name="player${i}_first"]`)?.value;
-        const last = document.querySelector(`input[name="player${i}_last"]`)?.value;
-        const pos = document.querySelector(`select[name="player${i}_position"]`)?.value;
-        if (jersey && first && last && pos) return true;
+        const jersey = document.querySelector('input[name="player' + i + '_jersey"]');
+        const first = document.querySelector('input[name="player' + i + '_first"]');
+        const last = document.querySelector('input[name="player' + i + '_last"]');
+        const pos = document.querySelector('select[name="player' + i + '_position"]');
+        const height = document.querySelector('input[name="player' + i + '_height"]');
+        
+        if (jersey && first && last && pos && height && 
+            normJersey(jersey.value) && first.value.trim() && last.value.trim() && pos.value && height.value.trim()) {
+          return true;
+        }
       }
       return false;
     }
@@ -832,38 +781,122 @@
     function validatePlayersCompleteness() {
       const rows = document.querySelectorAll('#playersTable tr').length;
       for (let i = 1; i <= rows; i++) {
-        const jersey = document.querySelector(`input[name="player${i}_jersey"]`)?.value;
-        const first = document.querySelector(`input[name="player${i}_first"]`)?.value;
-        const last = document.querySelector(`input[name="player${i}_last"]`)?.value;
-        const pos = document.querySelector(`select[name="player${i}_position"]`)?.value;
-        const any = jersey || first || last || pos;
-        const all = jersey && first && last && pos;
-        if (any && !all) return i;
+        const jersey = document.querySelector('input[name="player' + i + '_jersey"]');
+        const first = document.querySelector('input[name="player' + i + '_first"]');
+        const last = document.querySelector('input[name="player' + i + '_last"]');
+        const pos = document.querySelector('select[name="player' + i + '_position"]');
+        const height = document.querySelector('input[name="player' + i + '_height"]');
+        
+        if (jersey && first && last && pos && height) {
+          // If player has a first name, then last name, position, and height are required
+          if (first.value.trim()) {
+            if (!last.value.trim()) return { row: i, field: 'last name' };
+            if (!pos.value) return { row: i, field: 'position' };
+            if (!height.value.trim()) return { row: i, field: 'height' };
+            if (!normJersey(jersey.value)) return { row: i, field: 'jersey number' };
+          }
+          // Check for partial entries (any field filled but not all required ones)
+          const hasAny = normJersey(jersey.value) || first.value.trim() || last.value.trim() || pos.value || height.value.trim();
+          const hasRequired = normJersey(jersey.value) && first.value.trim() && last.value.trim() && pos.value && height.value.trim();
+          if (hasAny && !hasRequired) return { row: i, field: 'complete player info (jersey, first name, last name, position, height)' };
+        }
       }
-      return 0;
+      return null;
     }
 
-    // === Build roster ===
-    function buildRoster(fd) {
-      const teamName = fd.get('teamName').trim();
-      const league = fd.get('league');
-      const season = fd.get('season');
-      const submitterName = ucWords(fd.get('submitterName').trim());
-      const submitterEmail = fd.get('submitterEmail').trim();
+    function validateHeadCoach() {
+      const coachFirst = document.querySelector('input[name="coach_first"]');
+      const coachLast = document.querySelector('input[name="coach_last"]');
+      const coachEmail = document.querySelector('input[name="coach_email"]');
+      const coachPhone = document.querySelector('input[name="coach_phone"]');
+      
+      const hasFirst = coachFirst && coachFirst.value.trim();
+      const hasLast = coachLast && coachLast.value.trim();
+      const hasEmail = coachEmail && coachEmail.value.trim();
+      const hasPhone = coachPhone && coachPhone.value.trim();
+      
+      if (!hasFirst) return 'Head coach first name is required';
+      if (!hasLast) return 'Head coach last name is required';
+      if (!hasEmail) return 'Head coach email is required';
+      if (!hasPhone) return 'Head coach phone is required';
+      
+      return null;
+    }
 
-      const roster = { teamName, league, leagueEnglish: leagueToEnglish(league), submitterName, submitterEmail, season, players: [], staff: [] };
+    function validateStaffCompleteness() {
+      const staffRoles = ['asst1', 'asst2', 'asst3', 'gm'];
+      
+      for (let i = 0; i < staffRoles.length; i++) {
+        const role = staffRoles[i];
+        const first = document.querySelector('input[name="' + role + '_first"]');
+        const last = document.querySelector('input[name="' + role + '_last"]');
+        const email = document.querySelector('input[name="' + role + '_email"]');
+        const phone = document.querySelector('input[name="' + role + '_phone"]');
+        
+        if (first && last && email && phone) {
+          const hasFirst = first.value.trim();
+          const hasLast = last.value.trim();
+          const hasEmail = email.value.trim();
+          const hasPhone = phone.value.trim();
+          
+          // If any field is filled, all fields are required
+          const hasAny = hasFirst || hasLast || hasEmail || hasPhone;
+          const hasAll = hasFirst && hasLast && hasEmail && hasPhone;
+          
+          if (hasAny && !hasAll) {
+            const roleName = role === 'asst1' ? 'Assistant Coach 1' :
+                           role === 'asst2' ? 'Assistant Coach 2' :
+                           role === 'asst3' ? 'Assistant Coach 3' : 'General Manager';
+            return roleName + ' information is incomplete. All fields (first name, last name, email, phone) are required if any are filled.';
+          }
+        }
+      }
+      return null;
+    }
+
+    // === Build Roster Data with Sorting ===
+    function buildRoster(fd) {
+      const teamName = clean(fd.get('teamName'));
+      const league = clean(fd.get('league'));
+      const season = clean(fd.get('season'));
+      const submitterName = ucName(fd.get('submitterName'));
+      const submitterEmail = formatEmail(clean(fd.get('submitterEmail')));
+
+      const roster = {
+        teamName: teamName,
+        league: league,
+        leagueEnglish: leagueToEnglish(league),
+        submitterName: submitterName,
+        submitterEmail: submitterEmail,
+        season: season,
+        players: [],
+        staff: []
+      };
 
       const rows = document.querySelectorAll('#playersTable tr').length;
       for (let i = 1; i <= rows; i++) {
-        const jersey = fd.get(`player${i}_jersey`);
-        const first = fd.get(`player${i}_first`);
-        const last = fd.get(`player${i}_last`);
-        const pos = fd.get(`player${i}_position`);
-        const email = fd.get(`player${i}_email`);
+        const jersey = normJersey(fd.get('player' + i + '_jersey'));
+        const first = ucName(fd.get('player' + i + '_first'));
+        const last = ucName(fd.get('player' + i + '_last'));
+        const pos = clean(fd.get('player' + i + '_position'));
+        const email = formatEmail(clean(fd.get('player' + i + '_email')));
+        const height = clean(fd.get('player' + i + '_height'));
+        
         if (jersey && first && last && pos) {
-          roster.players.push({ number: i, jersey, firstName: ucWords(first), lastName: ucWords(last), position: pos, email });
+          roster.players.push({
+            number: i,
+            jersey: jersey,
+            firstName: first,
+            lastName: last,
+            position: pos,
+            email: email,
+            height: height || ''
+          });
         }
       }
+
+      // Sort players by jersey number (ascending)
+      roster.players.sort((a, b) => parseInt(a.jersey, 10) - parseInt(b.jersey, 10));
 
       const staffRoles = [
         { key: 'coach', label: 'Head Coach' },
@@ -873,145 +906,482 @@
         { key: 'gm', label: 'General Manager' }
       ];
       
-      for (const role of staffRoles) {
-        const f = fd.get(`${role.key}_first`);
-        const l = fd.get(`${role.key}_last`);
-        const e = fd.get(`${role.key}_email`);
-        const p = fd.get(`${role.key}_phone`);
-        if (f || l) roster.staff.push({ role: role.label, firstName: ucWords(f||''), lastName: ucWords(l||''), email: e||'', phone: (p||'').trim() });
+      for (let i = 0; i < staffRoles.length; i++) {
+        const role = staffRoles[i];
+        const f = ucName(fd.get(role.key + '_first'));
+        const l = ucName(fd.get(role.key + '_last'));
+        const e = formatEmail(clean(fd.get(role.key + '_email')));
+        const p = clean(fd.get(role.key + '_phone'));
+        
+        if (f && l) {
+          roster.staff.push({
+            role: role.label,
+            firstName: f || '',
+            lastName: l || '',
+            email: e || '',
+            phone: p || ''
+          });
+        }
       }
 
       return roster;
     }
 
-    function rosterSummary(roster) {
-      let out = '';
-      out += 'BASKETLIGAEN TEAM ROSTER SUBMISSION\n';
-      out += '==============================\n';
-      out += `Team: ${roster.teamName}\n`;
-      out += `League: ${roster.league} (${roster.leagueEnglish})\n`;
-      out += `Season: ${roster.season}\n`;
-      out += `Submitted by: ${roster.submitterName}\n`;
-      out += `Email: ${roster.submitterEmail}\n`;
-      out += `Date: ${new Date().toLocaleString()}\n`;
-      out += `Version: ${APP_VERSION}\n\n`;
-      out += 'CSV FORMAT FOR COPYING:\n';
-      out += '=======================\n';
-      roster.players.forEach(p => { out += `${p.jersey},${p.firstName},${p.lastName},${p.email||''},${p.position||''}\n`; });
-      out += `\nPLAYERS (${roster.players.length}):\n`;
-      out += '------------------------\n';
-      roster.players.forEach(p => { out += `#${p.jersey} - ${p.firstName} ${p.lastName}${p.position?` (${p.position})`:''}${p.email?` - ${p.email}`:''}\n`; });
-      out += `\nCOACHING STAFF (${roster.staff.length}):\n`;
-      out += '----------------------------\n';
-      roster.staff.forEach(s => { out += `${s.role}: ${s.firstName} ${s.lastName}${s.email?` - ${s.email}`:''}${s.phone?` | ${s.phone}`:''}\n`; });
-      return out;
+    // === Safe Review Renderer ===
+    function updateReviewContent() {
+      const formData = new FormData(document.getElementById('rosterForm'));
+      const roster = buildRoster(formData);
+      
+      function li(txt) { const el = document.createElement('li'); el.textContent = txt; return el; }
+
+      const root = document.createElement('div');
+      root.className = 'grid';
+      
+      const team = document.createElement('div');
+      team.className = 'col-12';
+      const h3a = document.createElement('h3'); h3a.textContent = '🏆 Team Information';
+      team.append(h3a);
+      const info = [
+        `Team: ${roster.teamName}`,
+        `League: ${roster.league} (${roster.leagueEnglish})`,
+        `Season: ${seasonLabel(parseInt(roster.season.split('-')[0], 10))}`,
+        `Submitted by: ${roster.submitterName}`,
+        `Email: ${roster.submitterEmail}`
+      ];
+      info.forEach(t => { const p = document.createElement('p'); p.textContent = t; team.append(p); });
+      
+      const players = document.createElement('div');
+      players.className = 'col-6';
+      const h3b = document.createElement('h3'); h3b.textContent = `🎯 Players (${roster.players.length})`;
+      players.append(h3b);
+      if (roster.players.length) {
+        const ul = document.createElement('ul'); ul.style.margin = 0; ul.style.paddingLeft = '20px';
+        roster.players.forEach(p => {
+          const heightText = p.height ? ` | Height: ${p.height}` : '';
+          const emailText = p.email ? ` | Email: ${p.email}` : '';
+          ul.append(li(`#${p.jersey} - Name: ${p.firstName} ${p.lastName} | Position: ${positionToFullName(p.position)}${heightText}${emailText}`));
+        });
+        players.append(ul);
+      } else {
+        const em = document.createElement('p'); em.innerHTML = '<em>No players added</em>'; players.append(em);
+      }
+      
+      const staff = document.createElement('div');
+      staff.className = 'col-6';
+      const h3c = document.createElement('h3'); h3c.textContent = `👨‍💼 Coaching Staff (${roster.staff.length})`;
+      staff.append(h3c);
+      if (roster.staff.length) {
+        const ul = document.createElement('ul'); ul.style.margin = 0; ul.style.paddingLeft = '20px';
+        roster.staff.forEach(s => {
+          const parts = [`${s.role}: ${s.firstName} ${s.lastName}`];
+          if (s.email) parts.push(s.email);
+          if (s.phone) parts.push(s.phone);
+          ul.append(li(parts.join(' - ').replace(' - | ', ' | ')));
+        });
+        staff.append(ul);
+      } else {
+        const em = document.createElement('p'); em.innerHTML = '<em>No staff added</em>'; staff.append(em);
+      }
+      
+      root.append(team, players, staff);
+      const container = document.getElementById('reviewContent');
+      container.replaceChildren(root);
     }
 
-    // === CSV ===
+    // === Draft Save/Restore ===
+    function saveDraft() {
+      const data = new FormData(document.getElementById('rosterForm'));
+      const obj = { currentStep: currentStep };
+      for (const pair of data.entries()) {
+        obj[pair[0]] = pair[1];
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+        flashOk('Draft saved locally.');
+      } catch (e) {
+        alert('Failed to save draft. Your browser may have storage restrictions.');
+      }
+    }
+
+    function restoreDraft() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          alert('No draft found.');
+          return;
+        }
+        
+        const obj = JSON.parse(raw);
+        
+        if (obj.currentStep) {
+          currentStep = obj.currentStep;
+          showStep(currentStep);
+          updateProgress();
+        }
+        
+        const playerKeys = Object.keys(obj).filter(function(k) { return k.indexOf('player') === 0; });
+        const maxIdx = Math.max(1, Math.max.apply(Math, playerKeys.map(function(k) {
+          const match = k.match(/player(\d+)_/);
+          return match ? parseInt(match[1], 10) : 1;
+        })));
+        
+        ensureRows(Math.min(HARD_MAX_PLAYERS, Math.max(DEFAULT_PLAYER_ROWS, maxIdx)));
+        
+        for (const k in obj) {
+          if (k === 'currentStep') continue;
+          const el = document.querySelector('[name="' + k + '"]');
+          if (el) el.value = obj[k];
+        }
+        
+        bumpRowCount();
+        checkDuplicates();
+        flashOk('Draft restored.');
+      } catch (e) {
+        alert('Failed to restore draft. Data may be corrupted.');
+      }
+    }
+
+    function flashOk(msg) {
+      const el = document.getElementById('okMsg');
+      el.textContent = '✅ ' + msg;
+      el.style.display = 'block';
+      setTimeout(function() { el.style.display = 'none'; }, 3000);
+    }
+
+    // === Clean CSV Download (No Headers) ===
     function downloadCSV(roster) {
       const BOM = '\uFEFF';
-      let csv = `Basketligaen Team Roster Submission - Pixellot Advantage - Version ${APP_VERSION}\n`;
-      csv += `Generated: ${new Date().toLocaleString()}\n\n`;
-      csv += `Team Name: ${roster.teamName}\n`;
-      csv += `League: ${roster.leagueEnglish}\n`;
-      csv += `Season: ${roster.season} (${seasonLabel(parseInt(roster.season.split('-')[0], 10))})\n`;
-      csv += `Submitted by: ${roster.submitterName}\n`;
-      csv += `Contact Email: ${roster.submitterEmail}\n\n`;
-      csv += 'PLAYERS\n';
-      csv += 'Jersey,First Name,Last Name,Email,Position\n';
-      roster.players.forEach(p => {
-        csv += `${p.jersey},"${p.firstName}","${p.lastName}","${p.email||''}","${p.position||''}"\n`;
-      });
-      csv += '\nSTAFF\n';
-      csv += 'First Name,Last Name,Email,Phone,Role\n';
-      roster.staff.forEach(s => {
-        csv += `"${s.firstName}","${s.lastName}","${s.email||''}","${s.phone||''}","${s.role}"\n`;
-      });
+      let csv = '';
+      
+      // Simple format: Jersey,FirstName,LastName,Email,Position (sorted by jersey)
+      for (let i = 0; i < roster.players.length; i++) {
+        const p = roster.players[i];
+        csv += p.jersey + ',' + p.firstName + ',' + p.lastName + ',' + (p.email || '') + ',' + (p.position || '') + '\n';
+      }
+      
       const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `basketligaen_${roster.teamName.replace(/[^a-z0-9\u0590-\u05FF]/gi, '_').toLowerCase()}_${roster.season}_roster_v${APP_VERSION}.csv`;
-      document.body.appendChild(a); 
-      a.click(); 
-      document.body.removeChild(a); 
+      a.download = 'basketligaen_' + roster.teamName.replace(/[^a-z0-9\u0590-\u05FF]/gi, '_').toLowerCase() + '_' + roster.season + '_roster_v' + APP_VERSION + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
 
-    // === Mock email function (since EmailJS won't work in Claude) ===
-    async function sendEmailViaAPI(params, { signal } = {}) {
-      // Simulate email sending for demo purposes
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          console.log('Mock email sent with params:', params);
-          resolve({ ok: true });
-        }, 1000);
+    // === Email API ===
+    async function sendEmailViaAPI(params, options) {
+      const url = 'https://api.emailjs.com/api/v1.0/email/send';
+      const payload = {
+        service_id: EmailJSConfig.serviceId,
+        template_id: EmailJSConfig.templateId,
+        user_id: EmailJSConfig.publicKey,
+        template_params: params
+      };
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: options && options.signal
       });
+      if (!res.ok) throw new Error('Email API responded ' + res.status);
+      return res;
     }
 
-    // === Mock data sink function ===
+    // === Data Sink ===
     async function sendToSheet(roster) {
-      // Simulate data sink for demo purposes
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          console.log('Mock data sent to sheet:', roster);
-          resolve(true);
-        }, 500);
-      });
+      if (!DATA_SINK_URL) return true;
+      
+      const url = DATA_SINK_URL + '?key=' + encodeURIComponent(DATA_SINK_KEY);
+      const payload = {
+        app_version: APP_VERSION,
+        build_date: BUILD_DATE,
+        season: roster.season,
+        team_name: roster.teamName,
+        league: roster.league,
+        league_english: roster.leagueEnglish,
+        submitter_name: roster.submitterName,
+        submitter_email: roster.submitterEmail,
+        players: roster.players,
+        staff: roster.staff
+      };
+      
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          return true;
+        } catch (e) {
+          if (attempt === 3) throw e;
+          await new Promise(function(r) { setTimeout(r, 400 * attempt); });
+        }
+      }
+    }
+
+    function rosterSummary(roster) {
+      let out = 'BASKETLIGAEN TEAM ROSTER SUBMISSION\n==============================\n';
+      out += 'Team: ' + roster.teamName + '\n';
+      out += 'League: ' + roster.league + ' (' + roster.leagueEnglish + ')\n';
+      out += 'Season: ' + roster.season + '\n';
+      out += 'Submitted by: ' + roster.submitterName + '\n';
+      out += 'Email: ' + roster.submitterEmail + '\n';
+      out += 'Date: ' + new Date().toLocaleString() + '\n';
+      out += 'Version: ' + APP_VERSION + '\n\n';
+      out += 'CSV FORMAT FOR COPYING:\n=======================\n';
+      for (let i = 0; i < roster.players.length; i++) {
+        const p = roster.players[i];
+        out += p.jersey + ',' + p.firstName + ',' + p.lastName + ',' + (p.email || '') + ',' + (p.position || '') + '\n';
+      }
+      out += '\nPLAYERS (' + roster.players.length + '):\n------------------------\n';
+      for (let i = 0; i < roster.players.length; i++) {
+        const p = roster.players[i];
+        const heightText = p.height ? ' | Height: ' + p.height : '';
+        const emailText = p.email ? ' | Email: ' + p.email : '';
+        out += '#' + p.jersey + ' - Name: ' + p.firstName + ' ' + p.lastName + ' | Position: ' + positionToFullName(p.position) + heightText + emailText + '\n';
+      }
+      out += '\nCOACHING STAFF (' + roster.staff.length + '):\n----------------------------\n';
+      for (let i = 0; i < roster.staff.length; i++) {
+        const s = roster.staff[i];
+        out += s.role + ': ' + s.firstName + ' ' + s.lastName;
+        if (s.email) out += ' - ' + s.email;
+        if (s.phone) out += ' | ' + s.phone;
+        out += '\n';
+      }
+      return out;
+    }
+
+    // === Enhanced Step Validation ===
+    function validateCurrentStep() {
+      const currentStepEl = document.querySelector('.form-step[data-step="' + currentStep + '"]');
+      const requiredFields = currentStepEl.querySelectorAll('[required]');
+      
+      for (let i = 0; i < requiredFields.length; i++) {
+        const field = requiredFields[i];
+        if (!field.value.trim()) {
+          field.focus();
+          field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return false;
+        }
+      }
+      
+      // Step 1: email validation with typo correction
+      if (currentStep === 1) {
+        const emailField = document.getElementById('submitterEmail');
+        const raw = emailField.value;
+        clearFieldError(emailField, 'submitterEmailError');
+
+        const { ok, suggestion } = emailValid(raw);
+        if (!ok && suggestion) {
+          const useCorrection = confirm('Email typo detected!\n\nDid you mean: ' + suggestion + ' ?');
+          if (useCorrection) {
+            emailField.value = suggestion;
+          } else {
+            showFieldError(emailField, 'Please correct your email. Suggested: ' + suggestion, 'submitterEmailError');
+            emailField.focus();
+            emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+          }
+        } else if (!ok) {
+          showFieldError(emailField, 'Please enter a valid email address.', 'submitterEmailError');
+          emailField.focus();
+          emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return false;
+        }
+      }
+      
+      // Step 2: enhanced player validation
+      if (currentStep === 2) {
+        if (!requireAtLeastOneCompletePlayer()) {
+          alert('Please add at least one complete player (jersey, first name, last name, position, height).');
+          return false;
+        }
+        
+        const validationError = validatePlayersCompleteness();
+        if (validationError) {
+          alert('Player #' + validationError.row + ' is missing required ' + validationError.field + '. If a player has a first name, then jersey number, last name, position, and height are all required.');
+          return false;
+        }
+        
+        checkDuplicates();
+        if (document.getElementById('dupWarn').style.display === 'block') {
+          alert('Resolve duplicate jersey numbers before continuing.');
+          return false;
+        }
+
+        const emailWarn = document.getElementById('emailWarn');
+        emailWarn.style.display = 'none';
+        emailWarn.textContent = '';
+
+        const playerEmailInputs = document.querySelectorAll('input[name*="player"][name*="_email"]');
+        for (let i = 0; i < playerEmailInputs.length; i++) {
+          const input = playerEmailInputs[i];
+          const v = (input.value || '').trim();
+          if (!v) continue;
+
+          const { ok, suggestion } = emailValid(v);
+          input.classList.remove('input-error');
+          input.removeAttribute('aria-invalid');
+
+          if (!ok && suggestion) {
+            const useCorrection = confirm('Player email typo detected!\n\nDid you mean: ' + suggestion + ' ?');
+            if (useCorrection) {
+              input.value = suggestion;
+            } else {
+              emailWarn.textContent = 'Please correct player email. Suggested: ' + suggestion;
+              emailWarn.style.display = 'block';
+              input.classList.add('input-error');
+              input.setAttribute('aria-invalid', 'true');
+              input.focus();
+              input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return false;
+            }
+          } else if (!ok) {
+            emailWarn.textContent = 'Invalid player email address.';
+            emailWarn.style.display = 'block';
+            input.classList.add('input-error');
+            input.setAttribute('aria-invalid', 'true');
+            input.focus();
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+          }
+        }
+      }
+      
+      // Step 3: comprehensive staff validation
+      if (currentStep === 3) {
+        const headCoachError = validateHeadCoach();
+        if (headCoachError) {
+          alert(headCoachError);
+          return false;
+        }
+        
+        const staffError = validateStaffCompleteness();
+        if (staffError) {
+          alert(staffError);
+          return false;
+        }
+        
+        // Validate staff email addresses
+        const staffEmailInputs = document.querySelectorAll('input[name*="coach_email"], input[name*="asst"][name*="_email"], input[name*="gm_email"]');
+        for (let i = 0; i < staffEmailInputs.length; i++) {
+          const input = staffEmailInputs[i];
+          const v = (input.value || '').trim();
+          if (!v) continue;
+
+          const { ok, suggestion } = emailValid(v);
+          if (!ok && suggestion) {
+            const useCorrection = confirm('Staff email typo detected!\n\nDid you mean: ' + suggestion + ' ?');
+            if (useCorrection) {
+              input.value = suggestion;
+            } else {
+              input.focus();
+              input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return false;
+            }
+          } else if (!ok) {
+            alert('Invalid staff email address. Please correct it.');
+            input.focus();
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+          }
+        }
+      }
+      
+      return true;
+    }
+
+    function nextStep() {
+      if (!validateCurrentStep()) return;
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+        updateProgress();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+        updateProgress();
+      }
     }
 
     // === Initialize ===
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('versionBadge').textContent = `Version ${APP_VERSION}`;
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('versionBadge').textContent = 'Version ' + APP_VERSION;
 
       populateSeasonSelect();
       ensureRows(DEFAULT_PLAYER_ROWS);
       updateProgress();
       
-      // Navigation event listeners
       document.getElementById('nextBtn').addEventListener('click', nextStep);
       document.getElementById('prevBtn').addEventListener('click', prevStep);
-      
-      // Player table controls
       document.getElementById('addRowBtn').addEventListener('click', addRow);
       document.getElementById('removeRowBtn').addEventListener('click', removeRow);
-      
-      // Bulk operations
       document.getElementById('selectAllPlayers').addEventListener('change', toggleSelectAll);
       document.getElementById('applyBulkPosition').addEventListener('click', applyBulkPosition);
       document.getElementById('clearSelected').addEventListener('click', clearSelected);
 
-      // Other controls
-      document.getElementById('clearBtn').addEventListener('click', () => {
+      // Clear submitter email error on input & blur validate if needed
+      const submitterEmailInput = document.getElementById('submitterEmail');
+      submitterEmailInput.addEventListener('input', function() { clearFieldError(this, 'submitterEmailError'); });
+      submitterEmailInput.addEventListener('blur', function() {
+        const { ok, suggestion } = emailValid(this.value);
+        if (!ok && !suggestion) {
+          showFieldError(this, 'Please enter a valid email address.', 'submitterEmailError');
+        }
+      });
+
+      // Clear player email warnings as user edits
+      document.addEventListener('input', function(e) {
+        if (e.target && e.target.name && e.target.name.endsWith('_email')) {
+          e.target.classList.remove('input-error');
+          e.target.removeAttribute('aria-invalid');
+          const emailWarn = document.getElementById('emailWarn');
+          if (emailWarn) { emailWarn.style.display = 'none'; emailWarn.textContent = ''; }
+        }
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', function() {
         if (!confirm('Clear all data (except your name/email if present)?')) return;
-        const keepName = document.getElementById('submitterName').value; 
+        const keepName = document.getElementById('submitterName').value;
         const keepEmail = document.getElementById('submitterEmail').value;
-        document.getElementById('rosterForm').reset(); 
-        ensureRows(DEFAULT_PLAYER_ROWS); 
+        document.getElementById('rosterForm').reset();
+        ensureRows(DEFAULT_PLAYER_ROWS);
         populateSeasonSelect();
-        document.getElementById('submitterName').value = keepName; 
+        document.getElementById('submitterName').value = keepName;
         document.getElementById('submitterEmail').value = keepEmail;
-        document.getElementById('dupWarn').style.display = 'none'; 
-        document.getElementById('okMsg').style.display = 'none'; 
+        document.getElementById('dupWarn').style.display = 'none';
+        document.getElementById('okMsg').style.display = 'none';
+        document.getElementById('emailWarn').style.display = 'none';
+        document.getElementById('submitterEmailError').style.display = 'none';
         document.getElementById('newBtn').style.display = 'none';
-        currentStep = 1; 
-        showStep(currentStep); 
+        currentStep = 1;
+        showStep(currentStep);
         updateProgress();
       });
       
-      document.getElementById('newBtn').addEventListener('click', () => {
-        const keepName = document.getElementById('submitterName').value; 
+      document.getElementById('newBtn').addEventListener('click', function() {
+        const keepName = document.getElementById('submitterName').value;
         const keepEmail = document.getElementById('submitterEmail').value;
-        document.getElementById('rosterForm').reset(); 
-        ensureRows(DEFAULT_PLAYER_ROWS); 
+        document.getElementById('rosterForm').reset();
+        ensureRows(DEFAULT_PLAYER_ROWS);
         populateSeasonSelect();
-        document.getElementById('submitterName').value = keepName; 
+        document.getElementById('submitterName').value = keepName;
         document.getElementById('submitterEmail').value = keepEmail;
-        document.getElementById('dupWarn').style.display = 'none'; 
-        document.getElementById('okMsg').style.display = 'none'; 
+        document.getElementById('dupWarn').style.display = 'none';
+        document.getElementById('okMsg').style.display = 'none';
+        document.getElementById('emailWarn').style.display = 'none';
+        document.getElementById('submitterEmailError').style.display = 'none';
         document.getElementById('newBtn').style.display = 'none';
-        currentStep = 1; 
-        showStep(currentStep); 
+        currentStep = 1;
+        showStep(currentStep);
         updateProgress();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
@@ -1019,8 +1389,7 @@
       document.getElementById('saveBtn').addEventListener('click', saveDraft);
       document.getElementById('restoreBtn').addEventListener('click', restoreDraft);
 
-      // Form submission
-      document.getElementById('rosterForm').addEventListener('submit', async (e) => {
+      document.getElementById('rosterForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const form = e.currentTarget;
         const submitBtn = document.getElementById('submitBtn');
@@ -1029,10 +1398,22 @@
         ok.style.display = 'none';
 
         const fd = new FormData(form);
-        const submitEmail = fd.get('submitterEmail')?.trim();
-        if (!emailValid(submitEmail)) { 
-          alert('Please enter a valid email address.'); 
-          return; 
+        const submitEmail = fd.get('submitterEmail');
+        if (submitEmail) {
+          const { ok: okEmail, suggestion } = emailValid(submitEmail);
+          clearFieldError(document.getElementById('submitterEmail'), 'submitterEmailError');
+          if (!okEmail && suggestion) {
+            const use = confirm('Did you mean "' + suggestion + '" ?');
+            if (use) {
+              document.getElementById('submitterEmail').value = suggestion;
+            } else {
+              showFieldError(document.getElementById('submitterEmail'), 'Please correct your email. Suggested: ' + suggestion, 'submitterEmailError');
+              return;
+            }
+          } else if (!okEmail) {
+            showFieldError(document.getElementById('submitterEmail'), 'Please enter a valid email address.', 'submitterEmailError');
+            return;
+          }
         }
 
         const roster = buildRoster(fd);
@@ -1045,24 +1426,33 @@
           roster_data: rosterSummary(roster)
         };
 
-        submitBtn.disabled = true; 
+        submitBtn.disabled = true;
         loading.style.display = 'block';
+        const controller = new AbortController();
+        const timeout = setTimeout(function() { controller.abort(); }, 15000);
+
+        const sinkPromise = sendToSheet(roster).catch(function(err) {
+          console.warn('Data sink error:', err);
+          return false;
+        });
 
         try {
-          await sendEmailViaAPI(params);
-          await sendToSheet(roster);
+          await sendEmailViaAPI(params, { signal: controller.signal });
+          await sinkPromise;
           downloadCSV(roster);
-          ok.textContent = '✅ Roster submitted successfully! Email sent, data logged, and CSV downloaded.';
+          ok.textContent = '✅ Roster submitted successfully. Email sent and CSV downloaded.';
           ok.style.display = 'block';
           document.getElementById('newBtn').style.display = 'inline-block';
         } catch (err) {
-          console.error('Submission error:', err);
+          console.error('Email API error:', err);
+          alert('Email sending failed. A CSV file will be downloaded instead. Please email it to pixellotibba@gmail.com.');
           downloadCSV(roster);
-          ok.textContent = '⚠️ Email failed. CSV downloaded as fallback.';
+          ok.textContent = '⚠️ Email failed. CSV downloaded as fallback. Data sink may or may not have succeeded.';
           ok.style.display = 'block';
           document.getElementById('newBtn').style.display = 'inline-block';
         } finally {
-          submitBtn.disabled = false; 
+          clearTimeout(timeout);
+          submitBtn.disabled = false;
           loading.style.display = 'none';
         }
       });
