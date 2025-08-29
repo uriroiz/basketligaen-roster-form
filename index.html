@@ -6,6 +6,16 @@
   <title>Basketligaen Team Roster Submission Form – Pixellot Advantage</title>
   <meta name="description" content="Basketligaen roster submission with multi-step form, progress tracking, and bulk operations." />
 
+  <!--
+    ============================
+    Version History (high-level)
+    ============================
+    3.23.6  – FIX: Email typo helper no longer suggests ".dkk" for valid ".dk".
+              Tightened suggestion rules to only operate on final TLD or known provider typos.
+              Removed overly broad '.d' → '.dk' rule.
+    3.23.5  – Previous public version (had the '.d' → '.dk' bug).
+  -->
+
   <style>
     :root {
       --bg: #f8fafc; --bg-2: #e2e8f0; --card: #ffffff; --ink: #1e293b; --ink-2: #374151;
@@ -128,8 +138,11 @@
     <p class="subtitle">Official roster form for Basketligaen teams • Powered by Pixellot Advantage</p>
 
     <div class="version-info" aria-live="polite">
-      <span id="versionBadge" class="version">Version 3.23.5</span>
+      <span id="versionBadge" class="version">Version 3.23.6</span>
       <span class="date">Updated: August 2025</span>
+      <div style="margin-top:6px;font-size:12px;color:#64748b">
+        Latest change: fixed email validator for Danish domains (.dk).
+      </div>
     </div>
 
     <!-- Progress Indicator -->
@@ -378,7 +391,7 @@
     const DATA_SINK_URL = 'https://script.google.com/macros/s/AKfycbxchgyxazvH9t4N0prpLTboqeAlb6kRz6xUj-klQ1HIYtrZjs9qeKxWVqTttVJKdREj/exec';
     const DATA_SINK_KEY = 'Pixellot2@25';
 
-    const APP_VERSION = '3.23.5';
+    const APP_VERSION = '3.23.6';
     const BUILD_DATE = new Date().toISOString().slice(0,10);
 
     const CURRENT_SEASON_START_YEAR = 2025;
@@ -388,7 +401,7 @@
 
     const DEFAULT_PLAYER_ROWS = 16;
     const HARD_MAX_PLAYERS = 40;
-    const STORAGE_KEY = "basketligaenRosterDraft_v3235";
+    const STORAGE_KEY = "basketligaenRosterDraft_v3236";
 
     // === Multi-Step Navigation ===
     let currentStep = 1;
@@ -434,52 +447,63 @@
       }
     }
 
-    // === Enhanced Email Validation with Danish Support ===
+    // === Robust Email Validation with safe typo suggestions (supports .dk) ===
     function emailValid(email) {
       const e = (email || '').trim().toLowerCase();
       if (!e) return { ok: true };
-      
-      // Basic format check
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return { ok: false };
-      
-      // Check for invalid patterns
-      if (e.includes('..')) return { ok: false }; // Double dots anywhere
-      if (e.includes('@.') || e.includes('.@')) return { ok: false }; // Dots adjacent to @
-      if (e.startsWith('.') || e.endsWith('.')) return { ok: false }; // Starts or ends with dot
-      if (e.includes('@-') || e.includes('-@')) return { ok: false }; // Hyphens adjacent to @
-      
-      // Split and validate parts
-      const parts = e.split('@');
-      if (parts.length !== 2) return { ok: false };
-      
-      const [localPart, domainPart] = parts;
-      if (!localPart || !domainPart) return { ok: false };
-      
-      // Validate domain part has proper TLD
-      const domainParts = domainPart.split('.');
-      if (domainParts.length < 2) return { ok: false };
-      
-      // Check for empty parts in domain
-      for (let i = 0; i < domainParts.length; i++) {
-        if (!domainParts[i] || domainParts[i].length === 0) return { ok: false };
+
+      // Basic RFC-like shape
+      const basic = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+      if (!basic) return { ok: false };
+
+      // Split
+      const [local, domain] = e.split('@');
+      if (!local || !domain) return { ok: false };
+
+      // Domain pieces checks
+      const labels = domain.split('.');
+      if (labels.length < 2) return { ok: false };
+
+      // Each label 1–63 chars, start/end alnum, hyphens allowed inside
+      for (let i = 0; i < labels.length; i++) {
+        const L = labels[i];
+        if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(L)) return { ok: false };
       }
-      
-      // TLD should be at least 2 characters (supports .dk)
-      const tld = domainParts[domainParts.length - 1];
+
+      const tld = labels[labels.length - 1];
+
+      // TLD must be >= 2 chars (so .dk is fine)
       if (tld.length < 2) return { ok: false };
-      
-      // Common typo corrections (including Danish)
-      const typoMap = {
-        '.con': '.com', '.cmo': '.com', '.ocm': '.com', '.cpm': '.com',
-        '.ddk': '.dk', '.d': '.dk', '.dkk': '.dk',
-        '@gamil.': '@gmail.', '@gmial.': '@gmail.', '@gmai.': '@gmail.',
-        '@yahooo.': '@yahoo.', '@hotmial.': '@hotmail.', '@outlok.': '@outlook.'
+
+      // Known TLD typos – apply ONLY to the final TLD
+      const tldTypos = {
+        'con': 'com', 'cmo': 'com', 'ocm': 'com', 'cpm': 'com', 'comm': 'com',
+        'ddk': 'dk',  'dkk': 'dk' // only suggest to .dk, never from .dk to .dkk
       };
-      
-      for (const k in typoMap) {
-        if (e.includes(k)) return { ok: false, suggestion: e.replace(k, typoMap[k]) };
+      if (tldTypos[tld]) {
+        const suggestion = e.replace(/\.[^.]+$/, '.' + tldTypos[tld]);
+        return { ok: false, suggestion };
       }
-      
+
+      // Popular provider typos – fix only once and only when they are clear
+      const providerTypos = [
+        { rx: /^gamil\./, rep: 'gmail.' },
+        { rx: /^gmial\./, rep: 'gmail.' },
+        { rx: /^gmai\./, rep: 'gmail.' },
+        { rx: /^outlok\./, rep: 'outlook.' },
+        { rx: /^yahooo\./, rep: 'yahoo.' },
+        { rx: /^hotmial\./, rep: 'hotmail.' }
+      ];
+      for (let i = 0; i < providerTypos.length; i++) {
+        if (providerTypos[i].rx.test(domain)) {
+          const suggestion = `${local}@${domain.replace(providerTypos[i].rx, providerTypos[i].rep)}`;
+          return { ok: false, suggestion };
+        }
+      }
+
+      // Reject obvious structural issues
+      if (e.includes('..') || e.includes('@.') || e.includes('.@')) return { ok: false };
+
       return { ok: true };
     }
 
@@ -516,14 +540,14 @@
     // === Danish Character Normalization + Name Utils ===
     function normalizeDanish(str="") {
       return str
-        .replace(/[æÆ]/g, match => match === 'Æ' ? 'AE' : 'ae')
-        .replace(/[øØ]/g, match => match === 'Ø' ? 'OE' : 'oe')
-        .replace(/[åÅ]/g, match => match === 'Å' ? 'AA' : 'aa')
-        .replace(/[äÄ]/g, match => match === 'Ä' ? 'AE' : 'ae')
-        .replace(/[öÖ]/g, match => match === 'Ö' ? 'OE' : 'oe')
-        .replace(/[ëË]/g, match => match === 'Ë' ? 'E' : 'e')
-        .replace(/[üÜ]/g, match => match === 'Ü' ? 'U' : 'u')
-        .replace(/[ïÏ]/g, match => match === 'Ï' ? 'I' : 'i');
+        .replace(/[æÆ]/g, m => m === 'Æ' ? 'AE' : 'ae')
+        .replace(/[øØ]/g, m => m === 'Ø' ? 'OE' : 'oe')
+        .replace(/[åÅ]/g, m => m === 'Å' ? 'AA' : 'aa')
+        .replace(/[äÄ]/g, m => m === 'Ä' ? 'AE' : 'ae')
+        .replace(/[öÖ]/g, m => m === 'Ö' ? 'OE' : 'oe')
+        .replace(/[ëË]/g, m => m === 'Ë' ? 'E' : 'e')
+        .replace(/[üÜ]/g, m => m === 'Ü' ? 'U' : 'u')
+        .replace(/[ïÏ]/g, m => m === 'Ï' ? 'I' : 'i');
     }
     
     function ucWords(str="") { 
@@ -788,14 +812,12 @@
         const height = document.querySelector('input[name="player' + i + '_height"]');
         
         if (jersey && first && last && pos && height) {
-          // If player has a first name, then last name, position, and height are required
           if (first.value.trim()) {
             if (!last.value.trim()) return { row: i, field: 'last name' };
             if (!pos.value) return { row: i, field: 'position' };
             if (!height.value.trim()) return { row: i, field: 'height' };
             if (!normJersey(jersey.value)) return { row: i, field: 'jersey number' };
           }
-          // Check for partial entries (any field filled but not all required ones)
           const hasAny = normJersey(jersey.value) || first.value.trim() || last.value.trim() || pos.value || height.value.trim();
           const hasRequired = normJersey(jersey.value) && first.value.trim() && last.value.trim() && pos.value && height.value.trim();
           if (hasAny && !hasRequired) return { row: i, field: 'complete player info (jersey, first name, last name, position, height)' };
@@ -839,7 +861,6 @@
           const hasEmail = email.value.trim();
           const hasPhone = phone.value.trim();
           
-          // If any field is filled, all fields are required
           const hasAny = hasFirst || hasLast || hasEmail || hasPhone;
           const hasAll = hasFirst && hasLast && hasEmail && hasPhone;
           
@@ -895,7 +916,6 @@
         }
       }
 
-      // Sort players by jersey number (ascending)
       roster.players.sort((a, b) => parseInt(a.jersey, 10) - parseInt(b.jersey, 10));
 
       const staffRoles = [
@@ -1053,7 +1073,6 @@
       const BOM = '\uFEFF';
       let csv = '';
       
-      // Simple format: Jersey,FirstName,LastName,Email,Position (sorted by jersey)
       for (let i = 0; i < roster.players.length; i++) {
         const p = roster.players[i];
         csv += p.jersey + ',' + p.firstName + ',' + p.lastName + ',' + (p.email || '') + ',' + (p.position || '') + '\n';
